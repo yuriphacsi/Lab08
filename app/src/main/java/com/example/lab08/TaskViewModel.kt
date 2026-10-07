@@ -39,6 +39,16 @@ class TaskViewModel(private val dao: TaskDao) : ViewModel() {
 
     fun deleteAllTasks() = change { dao.deleteAllTasks() }
 
+    fun editTask(task: Task, description: String) {
+        val text = description.trim()
+        if (text.isNotEmpty()) change {
+            val current = dao.getAllTasks().find { it.id == task.id }
+            if (current != null) dao.updateTask(current.copy(description = text))
+        }
+    }
+
+    fun deleteTask(task: Task) = change { dao.deleteTask(task.id) }
+
     class Factory(private val dao: TaskDao) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             require(modelClass.isAssignableFrom(TaskViewModel::class.java))
